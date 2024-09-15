@@ -53,6 +53,7 @@ async function getSongs(folder) {
   // attach an event listener to each song
   Array.from( document.querySelector(".songList").getElementsByTagName("li")).forEach((e) => {
     e.addEventListener("click", (element) => {
+      console.log("test");
       console.log(e.querySelector(".info").firstElementChild.innerHTML);
       playMusic(e.querySelector(".info").firstElementChild.innerHTML.trim());
     });
@@ -62,12 +63,21 @@ async function getSongs(folder) {
 
 const playMusic = (track, pause = false) => {
   currentSong.src = `/${currFolder}/` + track;
+  console.log(currentSong.src);
+  console.log(pause);
+  console.log(currentSong.paused)
   if (!pause) {
     currentSong.play();
     play.src = "img/pause.svg";
   } else {
     play.src = "img/play.svg";
   }
+  currentSong.onended = () => {
+    console.log('Song has ended');
+    let index = songs.indexOf(currentSong.src.split("/").slice(-1)[0]);
+    if (index + 1 < songs.length) {
+      playMusic(songs[index + 1]);
+    }  };
   document.querySelector(".songinfo").innerHTML = decodeURI(track);
   document.querySelector(".songtime").innerHTML = "00:00 / 00:00";
 };
